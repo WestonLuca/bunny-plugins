@@ -19,10 +19,7 @@ const translate = async (text: string, source_lang = "auto", target_lang: string
 
     if (!response.ok) throw Error(JSON.stringify(data))
 
-    const translatedText =
-        data?.output_text ||
-        data?.output?.[0]?.content?.[0]?.text ||
-        data?.candidates?.[0]?.content?.parts?.[0]?.text
+    const translatedText = data?.output_text
 
     if (!translatedText) throw Error(JSON.stringify(data))
 
