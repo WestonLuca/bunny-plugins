@@ -1,6 +1,6 @@
-import { settings } from ".."
+import { settings } from "AQ.Ab8RN6L1okZAbduIfUUx6uewtfbGOBuah9xI5p_KiOlxptFx9w"
 
-const GEMINI_API_KEY = "PUT_YOUR_NEW_API_KEY_HERE"
+const GEMINI_API_KEY = ""
 
 const translate = async (
     text: string,
