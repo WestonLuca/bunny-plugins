@@ -1,26 +1,77 @@
-import { storage } from "@vendetta/plugin"
-import patchActionSheet from "./patches/ActionSheet"
-import patchCommands from "./patches/Commands"
-import Settings from "./settings"
+import { getAssetIDByName } from "@vendetta/ui/assets"
+import { React, ReactNative, stylesheet, constants, NavigationNative, url } from "@vendetta/metro/common"
+import { semanticColors } from "@vendetta/ui"
+import { Forms } from "@vendetta/ui/components"
+import { manifest } from "@vendetta/plugin"
+import { useProxy } from "@vendetta/storage"
 
-export const settings: {
-    source_lang?: string // ???
-    target_lang?: string
-    translator?: number
-    immersive_enabled?: boolean
-} = storage
+import { settings } from ".."
+import TargetLang from "./TargetLang"
+import TranslatorPage from "./TranslatorPage"
 
-settings.target_lang ??= "en"
-settings.translator ??= 1
-settings.immersive_enabled ??= true
+const { ScrollView, Text } = ReactNative
+const { FormRow, FormSwitchRow } = Forms
 
-let patches = []
-
-export default {
-    onLoad: () => patches = [
-        patchActionSheet(),
-        patchCommands()
-    ],
-    onUnload: () => { for (const unpatch of patches) unpatch() },
-    settings: Settings
+const getTranslatorName = () => {
+    if (settings.translator == 0) return "DeepL"
+    if (settings.translator == 1) return "Google Translate"
+    if (settings.translator == 2) return "Gemini AI"
+    return "Google Translate"
 }
+
+const styles = stylesheet.createThemedStyleSheet({
+    subheaderText: {
+        color: semanticColors.HEADER_SECONDARY,
+        textAlign: "center",
+        margin: 10,
+        marginBottom: 50,
+        letterSpacing: 0.25,
+        fontFamily: constants.Fonts.PRIMARY_BOLD,
+        fontSize: 14
+    }
+})
+
+export default () => {
+    const navigation = NavigationNative.useNavigation()
+    useProxy(settings)
+
+    return (
+        <ScrollView>
+            <FormSwitchRow
+                label="Immersive Translation"
+                subLabel="Display both original and translation"
+                leading={<FormRow.Icon source={getAssetIDByName("ic_chat_bubble_filled_24px")} />}
+                value={settings.immersive_enabled ?? true}
+                onValueChange={(v) => {
+                    settings.immersive_enabled = v
+                }}
+            />
+
+            <FormRow
+                label="Translate to"
+                subLabel={settings.target_lang?.toLowerCase()}
+                leading={<FormRow.Icon source={getAssetIDByName("ic_activity_24px")} />}
+                trailing={() => <FormRow.Arrow />}
+                onPress={() => navigation.push("VendettaCustomPage", {
+                    title: "Translate to",
+                    render: TargetLang,
+                })}
+            />
+
+            <FormRow
+                label="Translator"
+                subLabel={getTranslatorName()}
+                leading={<FormRow.Icon source={getAssetIDByName("ic_locale_24px")} />}
+                trailing={() => <FormRow.Arrow />}
+                onPress={() => navigation.push("VendettaCustomPage", {
+                    title: "Translator",
+                    render: TranslatorPage,
+                })}
+            />
+
+            <Text style={styles.subheaderText} onPress={() => url.openURL("https://github.com/WestonLuca/bunny-plugins")}>
+                {`Build: (${manifest.hash.substring(0, 7)})`}
+            </Text>
+        </ScrollView>
+    )
+                    }
