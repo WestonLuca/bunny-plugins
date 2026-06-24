@@ -12,10 +12,17 @@ import TranslatorPage from "./TranslatorPage"
 const { ScrollView, Text } = ReactNative
 const { FormRow, FormSwitchRow } = Forms
 
+const getTranslatorName = () => {
+    if (settings.translator == 0) return "DeepL"
+    if (settings.translator == 1) return "Google Translate"
+    if (settings.translator == 2) return "Gemini AI"
+    return "Google Translate"
+}
+
 const styles = stylesheet.createThemedStyleSheet({
     subheaderText: {
         color: semanticColors.HEADER_SECONDARY,
-        textAlign: 'center',
+        textAlign: "center",
         margin: 10,
         marginBottom: 50,
         letterSpacing: 0.25,
@@ -31,17 +38,17 @@ export default () => {
     return (
         <ScrollView>
             <FormSwitchRow
-                label={"Immersive Translation"}
-                subLabel={"Display both original and translation"}
+                label="Immersive Translation"
+                subLabel="Display both original and translation"
                 leading={<FormRow.Icon source={getAssetIDByName("ic_chat_bubble_filled_24px")} />}
-                value={settings.immersive_enabled ?? true} // Default enabled
+                value={settings.immersive_enabled ?? true}
                 onValueChange={(v) => {
                     settings.immersive_enabled = v
                 }}
             />
 
             <FormRow
-                label={"Translate to"}
+                label="Translate to"
                 subLabel={settings.target_lang?.toLowerCase()}
                 leading={<FormRow.Icon source={getAssetIDByName("ic_activity_24px")} />}
                 trailing={() => <FormRow.Arrow />}
@@ -50,9 +57,10 @@ export default () => {
                     render: TargetLang,
                 })}
             />
+
             <FormRow
-                label={"Translator"}
-                subLabel={settings.translator ? "Google Translate" : "DeepL"}
+                label="Translator"
+                subLabel={getTranslatorName()}
                 leading={<FormRow.Icon source={getAssetIDByName("ic_locale_24px")} />}
                 trailing={() => <FormRow.Arrow />}
                 onPress={() => navigation.push("VendettaCustomPage", {
@@ -61,7 +69,7 @@ export default () => {
                 })}
             />
 
-            <Text style={styles.subheaderText} onPress={() => url.openURL("https://github.com/Rico040/bunny-plugins")}>
+            <Text style={styles.subheaderText} onPress={() => url.openURL("https://github.com/WestonLuca/bunny-plugins")}>
                 {`Build: (${manifest.hash.substring(0, 7)})`}
             </Text>
         </ScrollView>
