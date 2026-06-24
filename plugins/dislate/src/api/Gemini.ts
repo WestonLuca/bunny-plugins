@@ -10,32 +10,45 @@ const translate = async (
         if (original) return { source_lang, text }
 
         const response = await fetch(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
             {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
-                    "x-goog-api-key": GEMINI_API_KEY
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: `Translate this text to ${target_lang}. Return only the translation:\n\n${text}`
-                        }]
-                    }]
+                    contents: [
+                        {
+                            parts: [
+                                {
+                                    text: `Translate the following text to ${target_lang}. Return only the translation:\n\n${text}`
+                                }
+                            ]
+                        }
+                    ]
                 })
             }
         )
 
         const data = await response.json()
-        if (!response.ok) throw Error(JSON.stringify(data))
 
-        const translatedText = data?.candidates?.[0]?.content?.parts?.[0]?.text
-        if (!translatedText) throw Error(JSON.stringify(data))
+        if (!response.ok) {
+            throw Error(JSON.stringify(data))
+        }
 
-        return { source_lang, text: translatedText.trim() }
+        const translatedText =
+            data?.candidates?.[0]?.content?.parts?.[0]?.text
+
+        if (!translatedText) {
+            throw Error(JSON.stringify(data))
+        }
+
+        return {
+            source_lang,
+            text: translatedText.trim()
+        }
     } catch (e) {
-        throw Error(`Gemini error: ${e}`)
+        throw Error(`Failed to fetch from Gemini AI: ${e}`)
     }
 }
 
