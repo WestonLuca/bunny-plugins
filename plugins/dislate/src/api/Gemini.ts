@@ -1,6 +1,4 @@
-import { settings } from ".."
-
-const GEMINI_API_KEY = "AIzaSyC_-adl3p6Lhmge8yGpuFXAo0CTzGB4jw8"
+const GEMINI_API_KEY = "AQ.Ab8RN6LVhOwJFsD68GrrJGztvBgWWu_1L8m-tRREVDQeEr4DFA"
 
 const translate = async (
     text: string,
@@ -10,33 +8,32 @@ const translate = async (
 ) => {
     try {
         if (original) return { source_lang, text }
-
+AQ.Ab8RN6LVhOwJFsD68GrrJGztvBgWWu_1L8m-tRREVDQeEr4DFA
         const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
             {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [
-                        {
-                            parts: [
-                                {
-                                    text: `Translate the following text to "${target_lang}". Return only the translated text, no explanation:\n\n${text}`
-                                }
-                            ]
-                        }
-                    ]
+                    contents: [{
+                        parts: [{
+                            text: `Translate the following text to ${target_lang}. Return only the translation, no explanation:\n\n${text}`
+                        }]
+                    }]
                 })
             }
         )
 
         const data = await response.json()
+
+        if (!response.ok) {
+            throw Error(JSON.stringify(data))
+        }
+
         const translatedText = data?.candidates?.[0]?.content?.parts?.[0]?.text
 
         if (!translatedText) {
-            throw Error("No translation returned from Gemini")
+            throw Error(JSON.stringify(data))
         }
 
         return {
