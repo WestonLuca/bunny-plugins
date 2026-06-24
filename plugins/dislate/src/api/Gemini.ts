@@ -1,48 +1,32 @@
 const GEMINI_API_KEY = "AQ.Ab8RN6Kv5-M0fHZSsBttRKwFNR9WQJuhuzoknAJggG3taOiCTA"
 
-const translate = async (
-    text: string,
-    source_lang: string = "auto",
-    target_lang: string,
-    original: boolean = false
-) => {
-    try {
-        if (original) return { source_lang, text }
-AQ.Ab8RN6LVhOwJFsD68GrrJGztvBgWWu_1L8m-tRREVDQeEr4DFA
-        const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: `Translate the following text to ${target_lang}. Return only the translation, no explanation:\n\n${text}`
-                        }]
-                    }]
-                })
-            }
-        )
+const translate = async (text: string, source_lang = "auto", target_lang: string, original = false) => {
+    if (original) return { source_lang, text }
 
-        const data = await response.json()
+    const response = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": GEMINI_API_KEY
+        },
+        body: JSON.stringify({
+            model: "gemini-3.5-flash",
+            input: `Translate this text to ${target_lang}. Return only the translation:\n\n${text}`
+        })
+    })
 
-        if (!response.ok) {
-            throw Error(JSON.stringify(data))
-        }
+    const data = await response.json()
 
-        const translatedText = data?.candidates?.[0]?.content?.parts?.[0]?.text
+    if (!response.ok) throw Error(JSON.stringify(data))
 
-        if (!translatedText) {
-            throw Error(JSON.stringify(data))
-        }
+    const translatedText =
+        data?.output_text ||
+        data?.output?.[0]?.content?.[0]?.text ||
+        data?.candidates?.[0]?.content?.parts?.[0]?.text
 
-        return {
-            source_lang,
-            text: translatedText.trim()
-        }
-    } catch (e) {
-        throw Error(`Failed to fetch from Gemini AI: ${e}`)
-    }
+    if (!translatedText) throw Error(JSON.stringify(data))
+
+    return { source_lang, text: translatedText.trim() }
 }
 
 export default { translate }
