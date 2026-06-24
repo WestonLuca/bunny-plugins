@@ -1,4 +1,4 @@
-const GEMINI_API_KEY = "AQ.Ab8RN6LVhOwJFsD68GrrJGztvBgWWu_1L8m-tRREVDQeEr4DFA"
+const GEMINI_API_KEY = "Ab8RN6LVhOwJFsD68GrrJGztvBgWWu_1L8m-tRREVDQeEr4DFA"
 
 const translate = async (
     text: string,
