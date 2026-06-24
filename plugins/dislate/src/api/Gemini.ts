@@ -5,7 +5,8 @@ const translate = async (text: string, source_lang: string = "auto", target_lang
         if (original) return { source_lang, text }
 
         const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${"AQ.Ab8RN6ITpFs6CiKJI6wVyTxP-y_B_PyXbH3QZle9Etf9Ax1MXw"
+                                                                                                          }`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
